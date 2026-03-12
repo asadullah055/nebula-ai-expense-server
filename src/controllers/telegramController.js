@@ -44,3 +44,12 @@ export const setupTelegramWebhook = async (_req, res) => {
 
   return res.json({ success: true, url });
 };
+
+export const telegramWebhookInfo = async (_req, res) => {
+  if (!env.telegramBotToken) {
+    return res.status(400).json({ message: 'TELEGRAM_BOT_TOKEN is missing' });
+  }
+
+  const info = await telegramService.telegramApi.getWebhookInfo();
+  return res.json({ info });
+};

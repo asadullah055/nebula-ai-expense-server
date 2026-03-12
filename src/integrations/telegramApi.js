@@ -52,4 +52,8 @@ export class TelegramApi {
       secret_token: secretToken,
     });
   }
+
+  async getWebhookInfo() {
+    return this.call('getWebhookInfo', {});
+  }
 }
