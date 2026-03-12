@@ -18,6 +18,7 @@ import agentRoutes from './routes/agentRoutes.js';
 import telegramRoutes, { telegramPublicRouter } from './routes/telegramRoutes.js';
 
 const app = express();
+app.set('trust proxy', 1);
 
 app.use(helmet());
 app.use(
