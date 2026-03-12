@@ -33,7 +33,13 @@ export const setupTelegramWebhook = async (_req, res) => {
     return res.status(400).json({ message: 'TELEGRAM_BOT_TOKEN is missing' });
   }
 
-  const url = `${env.appBaseUrl}${env.telegramWebhookPath}`;
+  const configuredBaseUrl = (env.appBaseUrl || '').trim();
+  const isConfiguredBaseUrlUsable = Boolean(configuredBaseUrl) && !configuredBaseUrl.includes('localhost');
+  const forwardedProto = _req.headers['x-forwarded-proto'];
+  const protocol = typeof forwardedProto === 'string' && forwardedProto ? forwardedProto : _req.protocol;
+  const requestBaseUrl = `${protocol}://${_req.get('host')}`;
+  const baseUrl = isConfiguredBaseUrlUsable ? configuredBaseUrl : requestBaseUrl;
+  const url = `${baseUrl}${env.telegramWebhookPath}`;
   await telegramService.telegramApi.setWebhook(url, env.telegramWebhookSecret || undefined);
 
   return res.json({ success: true, url });
