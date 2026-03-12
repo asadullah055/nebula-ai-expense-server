@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import { env } from './config/env.js';
+import { connectDatabase } from './config/database.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -42,6 +43,15 @@ app.use(
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
+});
+
+app.use('/api', async (_req, _res, next) => {
+  try {
+    await connectDatabase();
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use('/api/auth', authRoutes);
